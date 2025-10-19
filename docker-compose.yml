@@ -1,0 +1,80 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: note-app-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: note_app_db
+      MYSQL_USER: note_app_user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqldump", "-u", "root", "-proot", "--no-data", "note_app_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: note-app-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: note-app-api
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: note-app
+      APP_ENV: local
+      APP_KEY: base64:g1o0TUb1fvXAB1eDkJSN1v2q6yG8uH5kL9mN3pQ7rT0=
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: note_app_db
+      DB_USERNAME: note_app_user
+      DB_PASSWORD: password
+      CACHE_DRIVER: redis
+      REDIS_HOST: redis
+      REDIS_PASSWORD: null
+      REDIS_PORT: 6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./api:/var/www/html
+    working_dir: /var/www/html
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: note-app-web
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+    depends_on:
+      - api
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run dev
+
+volumes:
+  db_data:

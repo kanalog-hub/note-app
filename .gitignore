@@ -1,0 +1,43 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.sublime-*
+
+# PHP/Laravel
+vendor/
+composer.lock
+.env
+storage/
+bootstrap/cache/
+*.log
+
+# Database
+database/seeders/
+database/factories/
+
+# OS
+Thumbs.db
+.DS_Store
