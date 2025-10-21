@@ -269,6 +269,12 @@ GitHub でプルリクエストを作成します。
 
 詳細なセットアップガイドは `SETUP_GUIDE.md` を参照してください。
 
+## テスト環境整備 (Phase 2)
+
+フロントエンド（Vitest + React Testing Library）とバックエンド（PHPUnit）のテスト環境を整備します。
+
+詳細は `TESTING_GUIDE.md` を参照してください。
+
 ## サポート
 
 問題が発生した場合：
